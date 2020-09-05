@@ -1,6 +1,6 @@
-import React from "react";
+import React, { useContext } from "react";
 import { AnimatedSwitch } from "react-router-transition";
-import { Route } from "react-router-dom";
+import { Route, Redirect } from "react-router-dom";
 
 import HomePage from "pages/HomePage";
 import TShirtsPage from "pages/TShirtsPage";
@@ -11,8 +11,13 @@ import BootsPage from "pages/BootsPage";
 import CartPage from "pages/CartPage";
 import BuyFormPage from "pages/BuyFormPage";
 import ThanksForBuyingPage from "pages/ThanksForBuyingPage";
+import { FormContext } from "context/FormContext";
+import { useSelector } from "react-redux";
 
 const Routes = () => {
+  const { userData } = useContext(FormContext);
+  const cart = useSelector(state => state.cart);
+
   return (
     <>
       <AnimatedSwitch
@@ -50,11 +55,11 @@ const Routes = () => {
         </Route>
 
         <Route exact path="/buyForm">
-          <BuyFormPage />
+          {cart.length !== 0 ? <BuyFormPage /> : <Redirect to="/" />}
         </Route>
 
         <Route exact path="/boughtItems">
-          <ThanksForBuyingPage />
+          {userData ? <ThanksForBuyingPage /> : <Redirect to="/" />}
         </Route>
       </AnimatedSwitch>
     </>
