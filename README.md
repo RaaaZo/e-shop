@@ -1,4 +1,5 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+E-shop is a page where You can "buy" some clothes. Written in React.js, includes libraries like Redux, GSAP, Axios, react-toastify, Styled-components, Formik and Yup validation.
+(Default login account is test@test.com tester123). Feel free to register on this page, user data is stored on MongoDB database. E-mail is only used to login on page account. After login You can check Your purchase history. Without login You can buy things as a guest.
 
 ## Available Scripts
 
