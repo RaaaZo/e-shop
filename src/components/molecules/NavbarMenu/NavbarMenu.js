@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useContext } from "react";
 import styled from "styled-components";
 import { NavLink } from "react-router-dom";
+import { IsLoggedContext } from "context/IsLoggedContext";
 
 const StyledUl = styled.ul`
   display: none;
@@ -17,7 +18,7 @@ const StyledUl = styled.ul`
 const StyledLi = styled.li`
   width: 100%;
   font-size: ${({ theme }) => theme.fontSize.xl};
-  padding: 20px 30px;
+  padding: 10px 25px;
   margin: 0 10px;
   color: white;
   background-color: ${({ theme }) => theme.secondaryLight};
@@ -43,9 +44,15 @@ const StyledLi = styled.li`
     text-decoration-color: ${({ theme }) => theme.secondaryLight};
     background-color: ${({ theme }) => theme.mainDark};
   }
+
+  @media (min-width: 1440px) {
+    padding: 15px 25px;
+  }
 `;
 
 const NavbarMenu = () => {
+  const { isLogged, handleIsLogged } = useContext(IsLoggedContext);
+
   return (
     <StyledUl>
       <StyledLi exact as={NavLink} activeClassName="selected" to="/">
@@ -71,6 +78,16 @@ const NavbarMenu = () => {
       <StyledLi exact as={NavLink} activeClassName="selected" to="/boots">
         Buty
       </StyledLi>
+
+      {isLogged ? (
+        <StyledLi onClick={handleIsLogged} as={NavLink} to="/">
+          Wyloguj
+        </StyledLi>
+      ) : (
+        <StyledLi exact as={NavLink} activeClassName="selected" to="/login">
+          Zaloguj
+        </StyledLi>
+      )}
     </StyledUl>
   );
 };

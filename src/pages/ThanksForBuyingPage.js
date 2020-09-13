@@ -33,18 +33,18 @@ const StyledButton = styled(Button)`
 `;
 
 const ThanksForBuyingPage = () => {
-  const { userData } = useContext(FormContext);
+  const { cartUserData } = useContext(FormContext);
 
   const { push } = useHistory();
 
   return (
     <Wrapper>
       <StyledHeader>
-        {userData.firstName}, dziękujemy za zakupy w naszym sklepie!
+        {cartUserData.firstName}, dziękujemy za zakupy w naszym sklepie!
       </StyledHeader>
 
       <StyledHeader>
-        {`Zakupione rzeczy zostaną wysłane na adres: ${userData.city}, ${userData.address}`}
+        {`Zakupione rzeczy zostaną wysłane na adres: ${cartUserData.city}, ${cartUserData.address}`}
       </StyledHeader>
 
       <StyledHeader>Koniecznie zobacz więcej rzeczy!</StyledHeader>

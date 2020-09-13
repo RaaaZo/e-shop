@@ -1,8 +1,7 @@
-import React, { useState, Fragment } from "react";
+import React, { useState, Fragment, useRef, useEffect } from "react";
 import styled, { css } from "styled-components";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import PropTypes from "prop-types";
-import { toast } from "react-toastify";
 
 import { addToCart, removeFromCart } from "ducks/actions/store.actions";
 
@@ -10,6 +9,8 @@ import { Header } from "components/atoms/Header/Header";
 import { Paragraph } from "components/atoms/Paragraph/Paragraph";
 import { Button } from "components/atoms/Button/Button";
 import FullImageModal from "components/atoms/FullImageModal/FullImageModal";
+import useScrollTrigger from "hooks/useScrollTrigger";
+import useToastify from "hooks/useToastify";
 
 const CardWrapper = styled.div`
   position: relative;
@@ -23,6 +24,10 @@ const CardWrapper = styled.div`
 
   &:first-of-type {
     margin-top: 10px;
+  }
+
+  &:last-of-type {
+    margin-bottom: 50px;
   }
 
   &::before {
@@ -117,47 +122,57 @@ const StyledButton = styled(Button)`
     `}
 `;
 
-const PagesCards = ({ id, img, name, price, inverse, cartCard, clothType }) => {
-  const [isFullScreenVisible, setisFullScreenVisible] = useState(false);
+const PagesCards = ({
+  id,
+  img,
+  name,
+  price,
+  inverse,
+  cartCard,
+  clothType,
+  shopCart
+}) => {
+  const [isFullScreenVisible, setIsFullScreenVisible] = useState(false);
+
+  const { showToastify } = useToastify();
+
+  const cardDivs = useRef([]);
+  cardDivs.current = [];
+
+  const addToRefs = el => {
+    if (el && !cardDivs.current.includes(el)) {
+      cardDivs.current.push(el);
+    }
+  };
+
+  const { scrollTriggerAnimation } = useScrollTrigger(cardDivs);
 
   const dispatch = useDispatch();
 
   const handleFullScreenImage = () => {
-    setisFullScreenVisible(prevState => !prevState);
+    setIsFullScreenVisible(prevState => !prevState);
   };
 
+  useEffect(() => {
+    scrollTriggerAnimation();
+  }, []);
+
   const handleAddToCart = (id, clothType) => {
-    toast.success("Dodano do koszyka!", {
-      position: "top-right",
-      autoClose: 1500,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined
-    });
+    showToastify("Dodano do koszyka!");
     dispatch(addToCart(id, clothType));
   };
 
   const handleRemoveFromCart = id => {
-    toast.success("Usunięto z koszyka!", {
-      position: "top-right",
-      autoClose: 1500,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined
-    });
+    showToastify("Usunięto z koszyka!");
     dispatch(removeFromCart(id));
   };
 
   return (
-    <Fragment>
+    <div ref={addToRefs}>
       <FullImageModal
         fullScreenImage={img}
         isFullScreenVisible={isFullScreenVisible}
-        setisFullScreenVisible={setisFullScreenVisible}
+        setIsFullScreenVisible={setIsFullScreenVisible}
       />
 
       <CardWrapper inverse={inverse}>
@@ -165,26 +180,29 @@ const PagesCards = ({ id, img, name, price, inverse, cartCard, clothType }) => {
           inverse={inverse}
           onClick={handleFullScreenImage}
           src={img}
+          alt={name}
         />
         <DetailsWrapper inverse={inverse}>
           <StyledHeader>{name}</StyledHeader>
           <StyledParagraph>{price} zł</StyledParagraph>
 
-          {cartCard ? (
+          {cartCard && (
             <StyledButton
               deleteFromCart="true"
               onClick={() => handleRemoveFromCart(id)}
             >
               Usuń
             </StyledButton>
-          ) : (
+          )}
+
+          {shopCart && (
             <StyledButton onClick={() => handleAddToCart(id, clothType)}>
               Dodaj do koszyka
             </StyledButton>
           )}
         </DetailsWrapper>
       </CardWrapper>
-    </Fragment>
+    </div>
   );
 };
 
@@ -192,14 +210,16 @@ PagesCards.propTypes = {
   img: PropTypes.string.isRequired,
   name: PropTypes.string.isRequired,
   price: PropTypes.number.isRequired,
+  cartCard: PropTypes.string,
   inverse: PropTypes.bool,
-  cartCard: PropTypes.string.isRequired,
-  clothType: PropTypes.string.isRequired,
-  id: PropTypes.bool.isRequired
+  clothType: PropTypes.string,
+  id: PropTypes.number.isRequired,
+  shopCart: PropTypes.bool
 };
 
 PagesCards.defaultProps = {
-  inverse: false
+  inverse: false,
+  cartCard: false
 };
 
 export default PagesCards;

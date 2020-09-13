@@ -47,7 +47,7 @@ const StyledImg = styled.img`
 const FullImageModal = ({
   fullScreenImage,
   isFullScreenVisible,
-  setisFullScreenVisible
+  setIsFullScreenVisible
 }) => {
   const fadeInModal = useRef(null);
 
@@ -61,7 +61,7 @@ const FullImageModal = ({
 
   return (
     <Wrapper
-      onClick={() => setisFullScreenVisible(prevState => !prevState)}
+      onClick={() => setIsFullScreenVisible(prevState => !prevState)}
       ref={fadeInModal}
       isFullScreenVisible={isFullScreenVisible}
     >
@@ -73,7 +73,7 @@ const FullImageModal = ({
 FullImageModal.propTypes = {
   fullScreenImage: PropTypes.string,
   isFullScreenVisible: PropTypes.bool.isRequired,
-  setisFullScreenVisible: PropTypes.func.isRequired
+  setIsFullScreenVisible: PropTypes.func.isRequired
 };
 
 export default FullImageModal;

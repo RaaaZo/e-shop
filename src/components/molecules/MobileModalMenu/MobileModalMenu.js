@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useContext } from "react";
 import { NavLink } from "react-router-dom";
 import styled, { css } from "styled-components";
 import PropTypes from "prop-types";
+import { IsLoggedContext } from "context/IsLoggedContext";
 
 const NavModal = styled.div`
   width: 150px;
@@ -62,7 +63,7 @@ const StyledNavLink = styled(NavLink)`
   }
 
   @media (min-width: 414px) {
-    margin: 20px 0;
+    margin: 15px 0;
   }
 
   @media (min-width: 768px) {
@@ -74,6 +75,11 @@ const StyledNavLink = styled(NavLink)`
     padding: 5px 20px;
   }
 
+  @media (orientation: landscape) and (min-width: 667px) and (max-width: 668px) {
+    margin: 5px 0;
+    padding: 2px 20px;
+  }
+
   &.selected {
     color: ${({ theme }) => theme.secondaryLight};
     background-color: ${({ theme }) => theme.mainDark};
@@ -82,6 +88,8 @@ const StyledNavLink = styled(NavLink)`
 `;
 
 const MobileModalMenu = ({ handleModalMenu, isModalMenuOpen }) => {
+  const { isLogged, handleIsLogged } = useContext(IsLoggedContext);
+
   return (
     <NavModal isModalMenuOpen={isModalMenuOpen}>
       <StyledNavLink
@@ -137,6 +145,27 @@ const MobileModalMenu = ({ handleModalMenu, isModalMenuOpen }) => {
       >
         Buty
       </StyledNavLink>
+
+      {isLogged ? (
+        <StyledNavLink
+          onClick={() => {
+            handleIsLogged();
+            handleModalMenu();
+          }}
+          to="/"
+        >
+          Wyloguj
+        </StyledNavLink>
+      ) : (
+        <StyledNavLink
+          exact
+          onClick={handleModalMenu}
+          activeClassName="selected"
+          to="/login"
+        >
+          Zaloguj
+        </StyledNavLink>
+      )}
     </NavModal>
   );
 };

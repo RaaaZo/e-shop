@@ -1,13 +1,25 @@
 import React, { useContext } from "react";
-import styled from "styled-components";
 import * as Yup from "yup";
 
-import { Formik, Field, Form, ErrorMessage } from "formik";
+import { Formik, ErrorMessage } from "formik";
 
-import { Header } from "components/atoms/Header/Header";
-import { Button } from "components/atoms/Button/Button";
 import { FormContext } from "context/FormContext";
-import { useHistory } from "react-router-dom";
+import { useHistory, Link } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import { clearCart } from "ducks/actions/store.actions";
+import {
+  FormWrapper,
+  StyledHeader,
+  StyledForm,
+  StyledLabel,
+  StyledField,
+  ErrorMessageWrapper,
+  StyledButton
+} from "components/atoms/FormikStyles/FormikStyles";
+import { Paragraph } from "components/atoms/Paragraph/Paragraph";
+import styled from "styled-components";
+import { IsLoggedContext } from "context/IsLoggedContext";
+import useFetch from "hooks/useFetch";
 
 const validation = Yup.object().shape({
   firstName: Yup.string()
@@ -24,65 +36,26 @@ const validation = Yup.object().shape({
   city: Yup.string().required("Pole wymagane")
 });
 
-const FormWrapper = styled.div`
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  align-items: center;
-  margin: 60px auto;
-`;
-
-const StyledForm = styled(Form)`
-  width: 90%;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  align-items: center;
-  margin: 40px auto;
-  border: 3px solid ${({ theme }) => theme.mainDark};
-
-  @media (min-width: 1024px) {
-    width: 60%;
-  }
-`;
-
-const StyledLabel = styled.label`
+const StyledParagraph = styled(Paragraph)`
   margin: 20px auto;
-  font-family: "Oswald", sans-serif;
-  font-weight: 700;
-  color: ${({ theme }) => theme.secondaryLight};
-`;
-
-const StyledField = styled(Field)`
-  font-size: ${({ theme }) => theme.fontSize.l};
-  padding: 10px 30px;
-  border: 2px solid ${({ theme }) => theme.secondaryLight};
-  border-radius: 15px;
-  text-align: center;
-`;
-
-const StyledButton = styled(Button)`
-  margin: 20px auto;
-`;
-
-const StyledHeader = styled(Header)`
   color: ${({ theme }) => theme.secondaryDark};
-`;
+  transition: color 0.4s 0.1s linear;
+  text-decoration: underline;
 
-const ErrorMessageWrapper = styled.div`
-  font-family: "Oswald", sans-serif;
-  color: red;
-  font-size: ${({ theme }) => theme.fontSize.s};
-  font-weight: 700;
-
-  @media (min-width: 1024px) {
-    font-size: ${({ theme }) => theme.fontSize.m};
+  &:hover {
+    color: ${({ theme }) => theme.secondaryLight};
   }
 `;
 
 const BuyFormPage = () => {
-  const { setUserData } = useContext(FormContext);
+  const { setCartUserData, userData } = useContext(FormContext);
+  const { isLogged } = useContext(IsLoggedContext);
+
+  const { fetchData } = useFetch();
+
+  const cart = useSelector(state => state.cart);
+
+  const dispatch = useDispatch();
 
   const { push } = useHistory();
 
@@ -100,8 +73,21 @@ const BuyFormPage = () => {
           city: ""
         }}
         onSubmit={values => {
-          setUserData(values);
+          setCartUserData(values);
           push("/boughtItems");
+
+          if (isLogged) {
+            fetchData(
+              `${process.env.REACT_APP_BACKEND_URL}/addToCart`,
+              {
+                email: userData,
+                cart
+              },
+              "post"
+            );
+          }
+
+          dispatch(clearCart());
         }}
         validationSchema={validation}
       >
@@ -174,6 +160,12 @@ const BuyFormPage = () => {
           </ErrorMessageWrapper>
 
           <StyledButton type="submit">Zamów</StyledButton>
+
+          {!isLogged && (
+            <StyledParagraph as={Link} to="/login">
+              Zaloguj się i dodaj produkty z koszyka do swojej historii zakupów!
+            </StyledParagraph>
+          )}
         </StyledForm>
       </Formik>
     </FormWrapper>

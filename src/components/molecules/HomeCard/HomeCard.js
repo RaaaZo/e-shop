@@ -1,7 +1,7 @@
 import React, { useRef, useEffect } from "react";
 import styled, { css } from "styled-components";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
+import useScrollTrigger from "hooks/useScrollTrigger";
+import { Link } from "react-router-dom";
 
 import { Header } from "components/atoms/Header/Header";
 
@@ -10,7 +10,6 @@ import sweatersSmall from "assets/images/sweaters-phone.png";
 import shirtSmall from "assets/images/shirts-phone.png";
 import jeansSmall from "assets/images/jeans-phone.png";
 import bootsSmall from "assets/images/boots-phone.png";
-import { Link } from "react-router-dom";
 
 const categories = [
   {
@@ -54,8 +53,6 @@ const categories = [
   }
 ];
 
-gsap.registerPlugin(ScrollTrigger);
-
 const Wrapper = styled.div`
   width: 100%;
   display: flex;
@@ -80,6 +77,10 @@ const CardWrapper = styled.div`
 
   &:first-of-type {
     margin-top: 10px;
+  }
+
+  &:last-of-type {
+    margin-bottom: 50px;
   }
 
   &:hover {
@@ -159,38 +160,24 @@ const HomeCard = () => {
     }
   };
 
+  const { scrollTriggerAnimation } = useScrollTrigger(cardDivs);
+
   useEffect(() => {
-    cardDivs.current.forEach(el => {
-      gsap.fromTo(
-        el,
-        { autoAlpha: 0 },
-        {
-          duration: 2,
-          autoAlpha: 1,
-          ease: "none",
-          scrollTrigger: {
-            trigger: el,
-            start: "top bottom-=170"
-          }
-        }
-      );
-    });
+    scrollTriggerAnimation();
   }, []);
 
   return (
     <Wrapper>
-      {categories.map(category => (
+      {categories.map(({ link, id, inverse, img, name }) => (
         <CardWrapper
           ref={addToRefs}
           as={Link}
-          to={category.link}
-          key={category.id}
-          inverse={category.inverse}
+          to={link}
+          key={id}
+          inverse={inverse}
         >
-          <StyledImg inverse={category.inverse} src={category.img} />
-          <StyledHeader inverse={category.inverse}>
-            {category.name}
-          </StyledHeader>
+          <StyledImg inverse={inverse} src={img} alt={name} />
+          <StyledHeader inverse={inverse}>{name}</StyledHeader>
         </CardWrapper>
       ))}
     </Wrapper>

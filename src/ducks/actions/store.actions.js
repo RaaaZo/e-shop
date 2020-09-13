@@ -16,3 +16,9 @@ export const removeFromCart = itemId => {
     }
   };
 };
+
+export const clearCart = () => {
+  return {
+    type: "CLEAR_CART"
+  };
+};

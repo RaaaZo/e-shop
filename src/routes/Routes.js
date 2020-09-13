@@ -1,21 +1,28 @@
 import React, { useContext } from "react";
 import { AnimatedSwitch } from "react-router-transition";
 import { Route, Redirect } from "react-router-dom";
-
-import HomePage from "pages/HomePage";
-import TShirtsPage from "pages/TShirtsPage";
-import SweatersPage from "pages/SweatersPage";
-import ShirtsPage from "pages/ShirtsPage";
-import TrousersPage from "pages/TrousersPage";
-import BootsPage from "pages/BootsPage";
-import CartPage from "pages/CartPage";
-import BuyFormPage from "pages/BuyFormPage";
-import ThanksForBuyingPage from "pages/ThanksForBuyingPage";
 import { FormContext } from "context/FormContext";
 import { useSelector } from "react-redux";
 
+const HomePage = React.lazy(() => import("../pages/HomePage"));
+const TShirtsPage = React.lazy(() => import("../pages/TShirtsPage"));
+const SweatersPage = React.lazy(() => import("../pages/SweatersPage"));
+const ShirtsPage = React.lazy(() => import("../pages/ShirtsPage"));
+const TrousersPage = React.lazy(() => import("../pages/TrousersPage"));
+const BootsPage = React.lazy(() => import("../pages/BootsPage"));
+const CartPage = React.lazy(() => import("../pages/CartPage"));
+const BuyFormPage = React.lazy(() => import("../pages/BuyFormPage"));
+const ThanksForBuyingPage = React.lazy(() =>
+  import("../pages/ThanksForBuyingPage")
+);
+const RegisterPage = React.lazy(() => import("../pages/RegisterPage"));
+const LoginPage = React.lazy(() => import("../pages/LoginPage"));
+const PurchaseHistoryPage = React.lazy(() =>
+  import("../pages/PurchaseHistoryPage")
+);
+
 const Routes = () => {
-  const { userData } = useContext(FormContext);
+  const { userData, cartUserData } = useContext(FormContext);
   const cart = useSelector(state => state.cart);
 
   return (
@@ -59,7 +66,19 @@ const Routes = () => {
         </Route>
 
         <Route exact path="/boughtItems">
-          {userData ? <ThanksForBuyingPage /> : <Redirect to="/" />}
+          {cartUserData ? <ThanksForBuyingPage /> : <Redirect to="/" />}
+        </Route>
+
+        <Route exact path="/register">
+          <RegisterPage />
+        </Route>
+
+        <Route exact path="/login">
+          <LoginPage />
+        </Route>
+
+        <Route exact path="/purchaseHistory">
+          {userData ? <PurchaseHistoryPage /> : <Redirect to="/" />}
         </Route>
       </AnimatedSwitch>
     </>

@@ -36,7 +36,6 @@ const GlobalStyles = createGlobalStyle`
     background-color:#FEEAE6;
     font-family: 'Rubik', sans-serif;
     font-size: 1.6rem;
-    margin-bottom: 50px;
     line-height: 1.5;
     overflow-x: hidden;
 }

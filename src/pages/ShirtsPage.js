@@ -17,6 +17,7 @@ const ShirtsPage = () => {
           price={item.price}
           inverse={item.inverse}
           clothType="shirts"
+          shopCart
         />
       ))}
     </PagesWrapper>

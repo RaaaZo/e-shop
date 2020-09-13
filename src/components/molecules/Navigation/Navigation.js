@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 
 import HamburgerMenu from "components/atoms/HamburgerMenu/HamburgerMenu";
 import { Link } from "react-router-dom";
@@ -28,12 +28,34 @@ const StyledLogo = styled(Link)`
   font-family: "Satisfy", cursive;
   color: white;
   font-size: ${({ theme }) => theme.fontSize.xxxl};
-  -webkit-text-stroke-width: 0.1px;
+  -webkit-text-stroke-width: 0.4px;
   -webkit-text-stroke-color: ${({ theme }) => theme.secondaryLight};
 
-  @media (min-width: 1124px) {
-    font-size: 4rem;
+  @media (min-width: 1024px) {
+    font-size: 3rem;
   }
+
+  @media (min-width: 1440px) {
+    font-size: 5rem;
+  }
+`;
+
+const IsOpenModal = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  z-index: 900;
+  transform: translateX(200%);
+  transition: transform 0.6s 0.1s ease-in-out;
+
+  ${({ isOpen }) =>
+    isOpen &&
+    css`
+      transform: translateX(0);
+    `}
 `;
 
 const Navigation = () => {
@@ -44,20 +66,23 @@ const Navigation = () => {
   };
 
   return (
-    <Wrapper>
-      <StyledLogo to="/">E-shop</StyledLogo>
-      <NavbarMenu />
+    <>
+      <IsOpenModal isOpen={isModalMenuOpen} onClick={handleModalMenu} />
+      <Wrapper>
+        <StyledLogo to="/">E-shop</StyledLogo>
+        <NavbarMenu />
 
-      <HamburgerMenu
-        isModalMenuOpen={isModalMenuOpen}
-        handleModalMenu={handleModalMenu}
-      />
+        <HamburgerMenu
+          isModalMenuOpen={isModalMenuOpen}
+          handleModalMenu={handleModalMenu}
+        />
 
-      <MobileModalMenu
-        isModalMenuOpen={isModalMenuOpen}
-        handleModalMenu={handleModalMenu}
-      />
-    </Wrapper>
+        <MobileModalMenu
+          isModalMenuOpen={isModalMenuOpen}
+          handleModalMenu={handleModalMenu}
+        />
+      </Wrapper>
+    </>
   );
 };
 
